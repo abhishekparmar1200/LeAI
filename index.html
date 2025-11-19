@@ -5,67 +5,204 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Subscribe</title>
 <style>
-  html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif}
-  .center{height:100%;display:flex;align-items:center;justify-content:center}
-  .card{ margin-top: 5rem;}
+  html,body{height:100%;margin:0;font-family:Arial,Helvetica,sans-serif;background:#fff}
+  .center{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem}
+  .container { display:flex; flex-direction:column; align-items:center; gap:1.5rem; width:100%; max-width:1100px; }
+
+  /* Keep your original card styles but no shadows */
+  .card{ margin-top: 1rem; }
   input[type="email"]{padding:.6rem;font-size:1rem;width:22rem}
   button{padding:.6rem 1rem;font-size:1rem;cursor:pointer;margin-top:.6rem}
   .hp {position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden;}
   #msg{margin-top:.6rem;font-size:.92rem}
+
+  /* Slider viewport (only the SVG+quote area slides) */
+  .slide-area {
+    position: relative;
+    width: 100%;
+    max-width: 860px;
+    height: 520px;           /* fixed height so layout doesn't jump */
+    overflow: hidden;
+    background: #ffffff;
+    box-sizing: border-box;
+    border-radius: 8px;
+  }
+
+  .panels {
+    display: flex;
+    width: 200%;             /* two panels next to each other */
+    height: 100%;
+    transition: transform 420ms cubic-bezier(.22,.9,.2,1);
+    will-change: transform;
+  }
+
+  .panel {
+    flex: 0 0 50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:1.2rem;
+    box-sizing:border-box;
+  }
+
+  .main-row {
+    display:flex;
+    gap:1rem;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    text-align:center;
+  }
+
+  .main-row .logo { max-height:320px; max-width:320px; width:50%; height:auto; }
+  .main-quote { font-style: italic; font-size:1.1rem; color:#333; margin-top:.6rem; }
+
+  /* extra panel */
+  .extra {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:left;
+    padding:2rem;
+    font-size:1.05rem;
+    line-height:1.5;
+    color:#222;
+    background: linear-gradient(180deg,#fafafa,#fff);
+  }
+
+  /* semi-transparent arrow button at middle-right (overlays slide-area) */
+  .slide-toggle {
+    position: absolute;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    z-index: 20;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.45); /* semi-transparent */
+    color: #fff;
+    border: none;
+    display: inline-grid;
+    place-items: center;
+    cursor: pointer;
+    backdrop-filter: blur(2px); /* subtle */
+  }
+  .slide-toggle:focus { outline: 3px solid rgba(34,139,230,0.18); }
+
+  .chev {
+    display:inline-block;
+    width:12px; height:12px;
+    border-right:2px solid currentColor;
+    border-bottom:2px solid currentColor;
+    transform: rotate(-45deg);
+    transition: transform 240ms ease;
+  }
+
+  .open .panels { transform: translateX(-50%); }
+  .open .chev { transform: rotate(135deg); }
+
+  /* responsive */
+  @media (max-width: 920px) {
+    .slide-area{ height:440px; }
+    .main-row .logo { max-height:260px; }
+  }
+  @media (max-width: 560px) {
+    .slide-area{ height:360px; max-width:calc(100vw - 40px); }
+    .main-row .logo { max-height:180px; width:60%; }
+    input[type="email"]{ width:18rem; }
+  }
+
+  /* Keep form fixed below the slide area so it doesn't move with panels */
+  .form-wrapper {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+  form.inline { display:flex; flex-direction:column; gap:.5rem; align-items:center; }
 </style>
 </head>
 <body>
   <div class="center">
-    <div style="display:flex; flex-direction:column;">
+    <div class="container">
 
-      <div style="display:flex;flex-direction:flex-row;align-items: center;">
-         <img src="./plato.svg" height="500" width="500" alt="Logo" class="logo" />
-        <div style="font-style: italic;"> ~ Necessity is the mother of all invention </div>
+      <!-- SLIDE AREA (only this slides) -->
+      <div id="slideArea" class="slide-area" aria-live="polite">
+
+        <!-- semi-transparent arrow toggle (middle-right) -->
+        <button id="toggleBtn" class="slide-toggle" aria-controls="panels" aria-expanded="false" title="Show more">
+          <span class="chev" aria-hidden="true"></span>
+        </button>
+
+        <div id="panels" class="panels">
+          <!-- Panel 1 (logo + quote) -->
+          <section class="panel" aria-label="Main">
+            <div class="main-row">
+              <img src="./plato.svg" alt="Logo" class="logo" />
+              <div class="main-quote"> ~ Necessity is the mother of all invention </div>
+            </div>
+          </section>
+
+          <!-- Panel 2 (extra content) -->
+          <aside class="panel extra" aria-label="More information">
+            <div>
+              <h2 style="margin-top:0;margin-bottom:.6rem;">Why?</h2>
+              <p>
+                I believe AI has a lot of potential in helping us interact with machines. 
+                One of the best places to start is by using it to track and guide us through the tremendous 
+                amount of data required for training robots. If the idea of an AI system talking to you and assisting 
+                with day-to-day configuration and debugging of robotic systems sounds interesting, you can follow our updates by adding your email below!
+                <br> <br>
+                Building towards a future of a universal language :)
+              </p>
+     
+      
+            </div>
+          </aside>
+        </div>
       </div>
 
-      <div class="card">
-        <form id="f" onsubmit="return false;">
-          <div style="display:flex;flex-direction:column;gap:.5rem;align-items:center">
+      <!-- Fixed form (does NOT move when panels slide) -->
+      <div class="form-wrapper">
+        <div class="card">
+          <form id="f" class="inline" onsubmit="return false;">
             <input id="email" type="email" placeholder="you@example.com" required />
             <!-- honeypot: visible in DOM but off-screen for humans -->
             <input id="hp" name="honeypot" class="hp" autocomplete="off" tabindex="-1" />
             <!-- timestamp (seconds) -->
             <input id="ts" name="ts" type="hidden" />
-            <!-- OPTIONAL: add a container for reCAPTCHA if you want -->
-            <!-- <div class="g-recaptcha" data-sitekey="YOUR_SITE_KEY"></div> -->
-            <button id="btn">Subscribe</button>
+            <button id="btn" type="submit">Subscribe</button>
             <div id="msg"></div>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
+
     </div>
   </div>
 
 <script>
-  // Your deployment URL
+  // Your deployment URL (preserved from your original)
   const endpoint = "https://script.google.com/macros/s/AKfycbzmvTESuXG_me16XkDjV9SHNXplD-EeTz0Fh_JUwOBH28Q45-btqvdJoroNytRpISzx/exec";
 
+  // Form elements
   const form = document.getElementById('f');
   const msg = document.getElementById('msg');
   const btn = document.getElementById('btn');
   const emailInput = document.getElementById('email');
   const tsInput = document.getElementById('ts');
 
-  // 1. Set Timestamp on page load
-  // We store it in a variable or ensure the input is set
+  // Set timestamp on page load
   const sessionStart = Math.floor(Date.now() / 1000);
   tsInput.value = sessionStart;
 
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     msg.textContent = "Sending...";
-    msg.style.color = "#666"; // Reset color
+    msg.style.color = "#666";
     btn.disabled = true;
 
     const email = emailInput.value.trim();
     const honeypot = document.getElementById('hp').value.trim();
-    
-    // Ensure ts is sent. If the DOM lost it, use the variable.
     const ts = tsInput.value || sessionStart;
 
     if (!email) {
@@ -73,8 +210,6 @@
       btn.disabled = false;
       return;
     }
-
-    // Basic client-side email regex
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       msg.textContent = "Invalid email address";
       btn.disabled = false;
@@ -85,7 +220,6 @@
       const res = await fetch(endpoint, {
         method: 'POST',
         redirect: 'follow',
-        // text/plain allows us to bypass CORS preflight checks
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ email, honeypot, ts })
       });
@@ -95,13 +229,11 @@
       if (j.success) {
         msg.textContent = "Thanks :) appreciate you wanting to be kept updated!";
         msg.style.color = "green";
-        // Only clear the email, do NOT reset the timestamp
-        emailInput.value = ""; 
+        emailInput.value = ""; // keep timestamp
       } else {
-        msg.textContent = "Error: " + j.error;
+        msg.textContent = "Error: " + (j.error || 'unknown error');
         msg.style.color = "red";
       }
-
     } catch (err) {
       console.error(err);
       msg.textContent = "Network error, please try again.";
@@ -111,17 +243,57 @@
     }
   });
 
-  // Handle Enter key
+  // Enter key on email triggers submit
   emailInput.addEventListener('keydown', function(e){
     if (e.key === 'Enter') {
-      e.preventDefault(); // Prevent default form submit behavior
-      form.dispatchEvent(new Event('submit'));
+      e.preventDefault();
+      form.dispatchEvent(new Event('submit', {cancelable:true}));
     }
   });
+
+  // Slider toggle (only slides the panels; form remains fixed)
+  const slideArea = document.getElementById('slideArea');
+  const panels = document.getElementById('panels');
+  const toggleBtn = document.getElementById('toggleBtn');
+  const closeInside = document.getElementById('closeInside');
+  const chev = toggleBtn.querySelector('.chev');
+
+  let open = false;
+  function setOpen(val) {
+    open = !!val;
+    if (open) {
+      slideArea.classList.add('open');
+      toggleBtn.setAttribute('aria-expanded','true');
+    } else {
+      slideArea.classList.remove('open');
+      toggleBtn.setAttribute('aria-expanded','false');
+    }
+  }
+
+  toggleBtn.addEventListener('click', () => setOpen(!open));
+  if (closeInside) closeInside.addEventListener('click', () => setOpen(false));
+
+  // keyboard support (left/right) for toggling panels
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') setOpen(true);
+    if (e.key === 'ArrowLeft') setOpen(false);
+  });
+
+  // lightweight touch swipe on the slide area
+  (function addSwipe(el){
+    let startX = null;
+    el.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+    }, {passive:true});
+    el.addEventListener('touchend', (e) => {
+      if (startX === null) return;
+      const endX = e.changedTouches[0].clientX;
+      const dx = startX - endX;
+      if (dx > 40) setOpen(true);
+      if (dx < -40) setOpen(false);
+      startX = null;
+    }, {passive:true});
+  })(slideArea);
 </script>
-
-<!-- OPTIONAL: include reCAPTCHA script if you plan to use it client-side -->
-<!-- <script src="https://www.google.com/recaptcha/api.js" async defer></script> -->
-
 </body>
 </html>
